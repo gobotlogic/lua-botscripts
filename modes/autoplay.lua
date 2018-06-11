@@ -11,9 +11,8 @@ function autoplay.start(provider)
     luaprint("Autoplay mode starting")
     for x = 1, 8 do
         luaprint(string.format("Run Through %s", x))
-        provider.scan_for_back_button()
-        provider.wait_for_ui(1)
-        provider.swipe_right()
+        -- provider.scan_for_back_button()
+        -- provider.swipe_right(2)
         provider.scan()
     end
 end
