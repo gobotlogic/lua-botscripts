@@ -168,7 +168,7 @@ provider.verify_battle = verify_battle
 provider.wait_for = wait_for
 
 -- wrapper to get npcs and world rewards
-function provider.scan1()
+function provider.scan()
     -- local current_page = provider.get_current_page()
     local circles, ok = detector.circles(definitions._c_npc_detection, provider.get_img_from_screen_shot(false, 5))
     for i, circle in ipairs(circles) do
@@ -179,21 +179,30 @@ function provider.scan1()
             provider.tapnsleep(circle, 1.5)
             local img = provider.get_img_from_screen_shot(false, 5)
             luaprint("Checking if a battle")
-            local battle = check_if_battle(img, .50)
-            if battle then
+            local battleV = check_if_battle(img, .50)
+            if battleV then
                 luaprint("precusor to a battle")
-                while battle do
+                while battleV do
                     luaprint("Tapping dialog area")
                     provider.tapnsleep(definitions.dialog_ok, 2.5)
                     local img = provider.get_img_from_screen_shot(false, 5)
-                    battle = check_if_battle(img, .50)
+                    battleV = check_if_battle(img, .50)
                 end
                 local img = provider.get_img_from_screen_shot(false, 5)
-                battle = provider.verify_battle(img)
-                if battle then
+                battleV = provider.verify_battle(img)
+                if battleV then
                     -- update status that current battle is starting
-                    provider.scan_for_ok()
-                    provider.battle_mode()
+                    if provider.scan_for_ok() then
+                        img = provider.get_img_from_screen_shot(false, 5)
+                    end
+                    local info = {}
+                    for _, mode in pairs(battle_modes) do
+                        if mode:check_battle(info, img) then
+                            -- get battle area
+                            mode:start(definitions.auto_duel_location, info)
+                            break
+                        end
+                    end
                     -- update status that current battle is done
                 end
             end
