@@ -211,26 +211,6 @@ function provider.scan()
     end
 end
 
-function provider.scan()
-    local img = provider.get_img_from_screen_shot(false, 5)
-    local battleV = provider.verify_battle(img)
-    if battleV then
-        -- update status that current battle is starting
-        if provider.scan_for_ok() then
-            img = provider.get_img_from_screen_shot(false, 5)
-        end
-        local info = {}
-        for _, mode in pairs(battle_modes) do
-            if mode:check_battle(info, img) then
-                -- get battle area
-                mode:start(definitions.auto_duel_location, info)
-                break
-            end
-        end
-        -- update status that current battle is done
-    end
-end
-
 return provider
 
 
